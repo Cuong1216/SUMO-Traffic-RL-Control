@@ -1,6 +1,6 @@
 """
-Script build_net.py
-Dùng để biên dịch các file XML (.nod, .edg, .con, .tll) thành mạng lưới SUMO chính thức (intersection.net.xml).
+Script: build_net.py
+Compiles XML configuration files (.nod, .edg, .con, .tll) into the official SUMO network (intersection.net.xml).
 """
 import os
 import subprocess
@@ -36,7 +36,7 @@ def build_network():
     
     netconvert_bin = get_netconvert_binary()
     
-    # Lệnh netconvert
+    # netconvert command arguments
     cmd = [
         netconvert_bin,
         "--node-files", os.path.join(cfg_dir, "nodes.nod.xml"),
@@ -47,17 +47,17 @@ def build_network():
         "--no-warnings", "true"
     ]
     
-    print("🚦 Đang biên dịch mạng lưới SUMO ngã tư J0...")
+    print("🚦 Compiling SUMO intersection network J0...")
     try:
         result = subprocess.run(cmd, check=True, capture_output=True, text=True)
-        print(f"✅ Đã tạo thành công file: {net_file}")
+        print(f"✅ Network file successfully generated: {net_file}")
     except FileNotFoundError:
-        print("❌ LỖI: Không tìm thấy lệnh 'netconvert' trong PATH.")
-        print("👉 Vui lòng cài đặt SUMO (ví dụ: winget install DLR.SUMO) hoặc thêm SUMO/bin vào biến môi trường PATH.")
-        print("👉 Sau đó chạy lại command: python build_net.py")
+        print("❌ ERROR: 'netconvert' executable not found in PATH.")
+        print("👉 Please install SUMO (e.g. winget install DLR.SUMO) or add SUMO/bin to your PATH environment variable.")
+        print("👉 Then rerun: python build_net.py")
         sys.exit(1)
     except subprocess.CalledProcessError as e:
-        print(f"❌ Lỗi khi chạy netconvert:\n{e.stderr}")
+        print(f"❌ Error during netconvert execution:\n{e.stderr}")
         sys.exit(1)
 
 if __name__ == "__main__":

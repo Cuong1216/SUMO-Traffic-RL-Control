@@ -1,8 +1,8 @@
 """
-Script kiểm thử và xác minh hoạt động của môi trường TrafficEnv (Milestone 1 Verification).
-- Chạy môi trường trong 100 bước mô phỏng.
-- In ra Ma trận lưới 2D mã hóa thực tế để người dùng trực quan thấy dữ liệu xe.
-- Kiểm tra tính chất Countdown Lock (khóa 10s trong pha vàng).
+Verification script for TrafficEnv environment (Milestone 1 Verification).
+- Runs the simulation for 50 simulation steps.
+- Prints the real-time encoded 2D grid matrix for visual verification of vehicle data.
+- Verifies the Countdown Lock mechanism (10-second lock during yellow phases).
 """
 import sys
 try:
@@ -15,67 +15,67 @@ from env.traffic_env import TrafficEnv
 
 def run_test():
     print("='*' * 60")
-    print("🚦 KIỂM THỬ MÔI TRƯỜNG 1 NGÃ TƯ (MILESTONE 1 VERIFICATION)")
+    print("🚦 INTERSECTION ENVIRONMENT VERIFICATION (MILESTONE 1)")
     print("='*' * 60")
 
     env = TrafficEnv(config_path="config.yaml")
     obs, info = env.reset()
     
-    print(f"✅ Reset thành công! Kích thước vector quan sát (Observation dim): {obs.shape}")
-    print(f"✅ Kích thước Action Space: {env.action_space}")
-    print(f"✅ Danh sách 8 làn đường theo dõi: {env.all_lanes}")
-    print("\n▶️ Bắt đầu mô phỏng 50 bước với các quyết định ngẫu nhiên và kiểm chứng Ma trận 2D:\n")
+    print(f"✅ Reset successful! Observation vector shape (Observation dim): {obs.shape}")
+    print(f"✅ Action Space size: {env.action_space}")
+    print(f"✅ Monitored 8 lanes list: {env.all_lanes}")
+    print("\n▶️ Starting 50 simulation steps with alternating decisions and 2D Grid inspection:\n")
 
     for step in range(1, 51):
-        # Chọn action: xen kẽ giữ pha và chuyển pha để test cả pha xanh lẫn pha vàng (countdown)
+        # Select action: alternate between maintaining and switching phase to test both green and yellow countdown phases
         if step % 15 == 0:
-            action = 1  # Ra lệnh chuyển pha sang pha tiếp theo
-            action_desc = "CHUYỂN PHA (Action=1)"
+            action = 1  # Command phase transition to the next phase
+            action_desc = "SWITCH PHASE (Action=1)"
         else:
-            action = 0  # Giữ nguyên pha hiện tại
-            action_desc = "GIỮ NGUYÊN (Action=0)"
+            action = 0  # Maintain current phase
+            action_desc = "KEEP GREEN (Action=0)"
 
         obs, reward, terminated, truncated, info = env.step(action)
         
-        # Nếu đang bật chế độ GUI, tạo độ trễ nhỏ (0.15s) mỗi bước để người dùng quan sát rõ ràng chuyển động xe
+        # If GUI mode is enabled, create a small delay (0.15s) per step for smooth visual tracking
         if env.use_gui:
             time.sleep(0.15)
         
-        # Giải mã Observation lại thành grid (8x10), phase và countdown để in ra
+        # Decode observation back into grid (8x10), phase ID, and countdown remaining
         grid_flat = obs[:-2]
         phase, countdown = obs[-2], obs[-1]
         grid = grid_flat.reshape((8, 10)).astype(int)
 
-        # Chỉ in chi tiết tại một số bước có xe hoặc khi chuyển pha
+        # Print detailed inspection only at periodic intervals or on phase transitions
         total_vehicles_in_grid = np.count_nonzero(grid)
         if step % 10 == 0 or action == 1 or phase in [1, 3]:
             phase_name = {
-                0: "Xanh Bắc-Nam",
-                1: f"Vàng Bắc-Nam (Đếm ngược {countdown:.0f}s - AI KHÓA)",
-                2: "Xanh Đông-Tây",
-                3: f"Vàng Đông-Tây (Đếm ngược {countdown:.0f}s - AI KHÓA)"
+                0: "Green North-South",
+                1: f"Yellow North-South (Countdown {countdown:.0f}s - AI LOCKED)",
+                2: "Green East-West",
+                3: f"Yellow East-West (Countdown {countdown:.0f}s - AI LOCKED)"
             }.get(int(phase), f"Phase {phase}")
 
-            print(f"--- [Bước {step:02d}] Action: {action_desc} | Pha đèn: {phase_name} | Reward: {reward:.2f} ---")
-            print(f"   Tổng số xe trong lưới quan sát 70m: {total_vehicles_in_grid}")
+            print(f"--- [Step {step:02d}] Action: {action_desc} | Traffic Light: {phase_name} | Reward: {reward:.2f} ---")
+            print(f"   Total vehicles inside 70m observation grid: {total_vehicles_in_grid}")
             
-            # In Ma trận lưới 2D đẹp mắt cho 4 hướng chính
-            # Làn 0-1: Bắc vào (N2J0), Làn 2-3: Nam vào (S2J0), Làn 4-5: Đông vào (E2J0), Làn 6-7: Tây vào (W2J0)
-            print("   [Ma trận xe 2D (0=Trống, 1=Xe máy, 2=Ô tô, 3=Buýt) - từ xa đến gần ngã tư]:")
+            # Print formatted 2D vehicle grid for the 4 main incoming directions
+            # Lanes 0-1: North incoming (N2J0), Lanes 2-3: South incoming (S2J0), Lanes 4-5: East incoming (E2J0), Lanes 6-7: West incoming (W2J0)
+            print("   [2D Vehicle Matrix (0=Empty, 1=Motorcycle, 2=Car, 3=Bus) - from farthest to stopline]:")
             for idx, lane_id in enumerate(env.all_lanes):
                 lane_cells = list(grid[idx])
-                print(f"     Làn {lane_id:8s}: {lane_cells}")
+                print(f"     Lane {lane_id:8s}: {lane_cells}")
             print()
 
         if terminated or truncated:
-            print(f"🏁 Mô phỏng kết thúc tại bước {step}")
+            print(f"🏁 Simulation ended at step {step}")
             break
 
     if env.use_gui:
-        print("\n👀 Đang dừng 3 giây để bạn giữ màn hình quan sát ngã tư trước khi đóng SUMO GUI...")
+        print("\n👀 Pausing for 3 seconds to let you inspect the intersection before closing SUMO GUI...")
         time.sleep(3)
     env.close()
-    print("🎉 HOÀN TẤT KIỂM THỬ MILESTONE 1! Môi trường sẵn sàng cho huấn luyện RL.")
+    print("🎉 MILESTONE 1 VERIFICATION COMPLETED! Environment is ready for RL training.")
 
 if __name__ == "__main__":
     run_test()

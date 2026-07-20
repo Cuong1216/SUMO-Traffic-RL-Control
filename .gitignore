@@ -1,8 +1,8 @@
 # Virtual Environment
 venv/
 .venv/
-ENV/
 /.env
+!/env/
 
 # Python Cache & Bytecode
 __pycache__/
@@ -10,7 +10,7 @@ __pycache__/
 *$py.class
 .pytest_cache/
 
-# RL Training Logs & Saved Models (Không push file training nặng hoặc tensorboard log lên Git)
+# RL Training Logs & Saved Models (Do not push heavy training artifacts to Git)
 logs/
 models/
 *.zip

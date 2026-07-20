@@ -1,38 +1,38 @@
 @echo off
 echo ====================================================
-echo BAT DAU CAI DAT MOI TRUONG DU AN AI
+echo STARTING AI PROJECT ENVIRONMENT SETUP
 echo ====================================================
 
-REM Kiểm tra xem thư mục venv đã tồn tại chưa
+REM Check if venv folder already exists
 if not exist "venv\" (
-    echo [1/4] Thư mục venv chưa tồn tại. Đang tạo môi trường ảo mới...
+    echo [1/4] venv folder not found. Creating new virtual environment...
     python -m venv venv
     if errorlevel 1 (
-        echo LỖI: Không thể tạo môi trường ảo. Hãy chắc chắn rằng bạn đã cài đặt Python.
+        echo ERROR: Failed to create virtual environment. Please ensure Python is installed and in PATH.
         pause
         exit /b 1
     )
-    echo Đã tạo môi trường ảo venv thành công.
+    echo Virtual environment venv created successfully.
 ) else (
-    echo [1/4] Thư mục venv đã tồn tại. Bỏ qua bước tạo mới.
+    echo [1/4] venv folder already exists. Skipping creation step.
 )
 
-REM Kích hoạt môi trường ảo
-echo [2/4] Đang kích hoạt môi trường ảo...
+REM Activate virtual environment
+echo [2/4] Activating virtual environment...
 call venv\Scripts\activate.bat
 
-REM Nâng cấp pip lên bản mới nhất
-echo [3/4] Đang nâng cấp pip lên phiên bản mới nhất...
+REM Upgrade pip to latest version
+echo [3/4] Upgrading pip to latest version...
 python -m pip install --upgrade pip
 
-REM Cài đặt các thư viện từ requirements.txt
-echo [4/4] Đang cài đặt các thư viện từ requirements.txt (bao gồm PyTorch CPU)...
+REM Install dependencies from requirements.txt
+echo [4/4] Installing dependencies from requirements.txt (including PyTorch CPU)...
 pip install -r requirements.txt
 
 echo ====================================================
-echo CAI DAT HOAN TAT!
+echo SETUP COMPLETED SUCCESSFULLY!
 echo ====================================================
-echo Để bắt đầu làm việc hoặc chạy code, hãy kích hoạt môi trường ảo bằng lệnh:
+echo To start working or running scripts, activate the virtual environment using:
 echo     venv\Scripts\activate
 echo.
 pause

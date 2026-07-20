@@ -1,25 +1,25 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Định nghĩa các luồng kết nối giữa các làn vào và làn ra tại J0 -->
+<!-- Define connection logic between incoming lanes and outgoing lanes at J0 -->
 <connections xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/connections_file.xsd">
-    <!-- Từ Bắc (N2J0) đi Nam, Đông, Tây -->
+    <!-- From North (N2J0) going East, South, West -->
     <connection from="N2J0" to="J02E" fromLane="0" toLane="0"/>
     <connection from="N2J0" to="J02S" fromLane="0" toLane="0"/>
     <connection from="N2J0" to="J02S" fromLane="1" toLane="1"/>
     <connection from="N2J0" to="J02W" fromLane="1" toLane="1"/>
 
-    <!-- Từ Nam (S2J0) đi Bắc, Tây, Đông -->
+    <!-- From South (S2J0) going West, North, East -->
     <connection from="S2J0" to="J02W" fromLane="0" toLane="0"/>
     <connection from="S2J0" to="J02N" fromLane="0" toLane="0"/>
     <connection from="S2J0" to="J02N" fromLane="1" toLane="1"/>
     <connection from="S2J0" to="J02E" fromLane="1" toLane="1"/>
 
-    <!-- Từ Đông (E2J0) đi Tây, Bắc, Nam -->
+    <!-- From East (E2J0) going North, West, South -->
     <connection from="E2J0" to="J02N" fromLane="0" toLane="0"/>
     <connection from="E2J0" to="J02W" fromLane="0" toLane="0"/>
     <connection from="E2J0" to="J02W" fromLane="1" toLane="1"/>
     <connection from="E2J0" to="J02S" fromLane="1" toLane="1"/>
 
-    <!-- Từ Tây (W2J0) đi Đông, Nam, Bắc -->
+    <!-- From West (W2J0) going South, East, North -->
     <connection from="W2J0" to="J02S" fromLane="0" toLane="0"/>
     <connection from="W2J0" to="J02E" fromLane="0" toLane="0"/>
     <connection from="W2J0" to="J02E" fromLane="1" toLane="1"/>

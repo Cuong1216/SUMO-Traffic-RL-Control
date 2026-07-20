@@ -1,30 +1,30 @@
 # ==========================================
-# CẤU HÌNH DỰ ÁN TỐI ƯU ĐÈN GIAO THÔNG (RL)
+# TRAFFIC LIGHT RL CONTROL PROJECT CONFIG
 # ==========================================
 
 env:
   sumo_cfg: "sumo_config/simulation.sumocfg"
-  use_gui: false              # Bật true để xem hình ảnh SUMO GUI khi test
-  tl_id: "J0"                 # ID ngã tư có đèn tín hiệu trong SUMO
-  countdown_duration: 10      # Ràng buộc bắt buộc: Thời gian đếm ngược (giây) cho pha chuyển tiếp
+  use_gui: false              # Set to true to display SUMO GUI during testing/verification
+  tl_id: "J0"                 # Traffic light ID in SUMO network
+  countdown_duration: 10      # Mandatory constraint: Countdown duration (seconds) for transition phases
   
 grid:
-  cell_length: 7.0            # Chiều dài mỗi ô trên lưới (mét)
-  n_cells: 10                 # Số ô (cells) mỗi làn đường → quan sát được 70m tính từ ngã tư
-  vehicle_type_code:          # Mã hóa ma trận 2D
+  cell_length: 7.0            # Length of each observation cell (meters)
+  n_cells: 10                 # Number of cells per lane -> observes 70m from the intersection
+  vehicle_type_code:          # 2D matrix encoding mapping
     empty: 0
     motorcycle: 1
     passenger: 2
     bus: 3
 
 reward:
-  alpha: 0.4                  # Trọng số cho lượng xe chờ (Queue length)
-  beta: 0.6                   # Trọng số cho tổng thời gian chờ (Waiting time)
+  alpha: 0.4                  # Weight for halting vehicle count (Queue length)
+  beta: 0.6                   # Weight for total waiting time
 
 agent:
-  algorithm: "DQN"            # Thuật toán: DQN (hoặc PPO)
+  algorithm: "DQN"            # Reinforcement learning algorithm: DQN (or PPO)
   learning_rate: 0.0001
-  buffer_size: 50000          # Giới hạn buffer size để phù hợp RAM 8GB
+  buffer_size: 50000          # Replay buffer size optimized for 8GB RAM
   batch_size: 64
   gamma: 0.99
   total_timesteps: 100000

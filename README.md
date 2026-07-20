@@ -1,111 +1,111 @@
 # 🚦 SUMO Traffic RL Control
 
-Dự án tối ưu hóa điều khiển đèn tín hiệu giao thông tại ngã tư tự động bằng **Học tăng cường sâu (Deep Reinforcement Learning - DQN)** kết hợp với phần mềm mô phỏng giao thông chuyên nghiệp **Eclipse SUMO**.
+An automated traffic light control optimization project at a complex intersection using **Deep Reinforcement Learning (DQN)** integrated with the professional traffic simulation simulator **Eclipse SUMO**.
 
 ---
 
-## 📋 Giới thiệu & Kiến trúc Môi trường
+## 📋 Introduction & Environment Architecture
 
-Hệ thống mô phỏng một ngã tư phức tạp `J0` gồm 4 hướng (Bắc, Nam, Đông, Tây) với đa dạng phương tiện (`xe máy`, `ô tô`, `xe buýt`). Môi trường được xây dựng chuẩn theo giao diện **Gymnasium** (`TrafficEnv`):
+The system simulates a complex intersection `J0` with 4 directions (North, South, East, West) and diverse vehicle types (`motorcycle`, `passenger`, `bus`). The environment is built according to the **Gymnasium** standard (`TrafficEnv`):
 
-* **Ma trận quan sát 2D (State - Observation Space)**:
-  * Lưới quan sát bao phủ 8 làn đường đi vào ngã tư, mỗi làn được chia thành `10 ô (cells)`, mỗi ô dài `7m` (tổng tầm nhìn `70m`).
-  * Mã hóa loại phương tiện: `0 = Trống`, `1 = Xe máy`, `2 = Ô tô`, `3 = Xe buýt`.
-  * Vector quan sát phẳng hoá (`dim = 82`): gồm ma trận lưới `8x10` (80 giá trị) + `1` (ID pha đèn hiện tại) + `1` (Thời gian đếm ngược còn lại).
+* **2D Observation Matrix (State - Observation Space)**:
+  * The observation grid covers 8 incoming lanes to the intersection. Each lane is divided into `10 cells`, with each cell `7m` long (total observation range of `70m`).
+  * Vehicle type encoding: `0 = Empty`, `1 = Motorcycle`, `2 = Passenger Car`, `3 = Bus`.
+  * Flattened observation vector (`dim = 82`): includes the `8x10` grid matrix (80 values) + `1` (Current Phase ID) + `1` (Remaining countdown duration).
 
-* **Không gian hành động (Action Space)**:
+* **Action Space**:
   * `Discrete(2)`:
-    * **`Action 0` (Giữ nguyên)**: Tiếp tục duy trì pha xanh hiện tại.
-    * **`Action 1` (Chuyển pha)**: Ra lệnh chuyển sang pha vàng tiếp theo (tự động kích hoạt thời gian đếm ngược `10 giây`).
+    * **`Action 0` (Keep Green)**: Maintain the current green phase.
+    * **`Action 1` (Switch Phase)**: Trigger a phase transition to the next yellow phase (automatically initiates a `10-second` countdown).
 
-* **Hàm phần thưởng (Reward Function)**:
+* **Reward Function**:
   $$\text{Reward} = - (\alpha \times \text{Queue Length} + \beta \times \text{Total Waiting Time})$$
-  * Trong đó trọng số mặc định: $\alpha = 0.4$, $\beta = 0.6$. Mục tiêu của AI là giảm thiểu tối đa hàng đợi và thời gian chờ của phương tiện.
+  * Default weights: $\alpha = 0.4$, $\beta = 0.6$. The agent's objective is to minimize vehicle queue length and total waiting time across all lanes.
 
-* **Ràng buộc an toàn (Countdown Lock)**:
-  * Khi đèn chuyển sang **Pha Vàng (Yellow phase - 10 giây)**, AI bị **KHÓA** quyền can thiệp để đảm bảo an toàn giao thông. Mô phỏng tiếp tục tiến lên tự động cho đến khi hết pha vàng mới cho phép AI quyết định tiếp.
+* **Safety Constraint (Countdown Lock)**:
+  * When the traffic light transitions to a **Yellow Phase (10 seconds)**, the AI is **LOCKED** from intervening to ensure safety. The simulation advances automatically until the yellow phase ends before allowing the AI to make decisions again.
 
 ---
 
-## 📁 Cấu trúc Thư mục Dự án
+## 📁 Project Directory Structure
 
 ```text
 Traffic Simulation/
 ├── agent/
 │   ├── __init__.py
-│   └── train.py               # Script huấn luyện AI bằng thuật toán DQN (Stable-Baselines3)
+│   └── train.py               # AI training script using DQN algorithm (Stable-Baselines3)
 ├── env/
 │   ├── __init__.py
-│   └── traffic_env.py         # Môi trường Gymnasium (TrafficEnv) kết nối TraCI / SUMO
+│   └── traffic_env.py         # Gymnasium environment (TrafficEnv) connecting TraCI / SUMO
 ├── sumo_config/
-│   ├── nodes.nod.xml          # Định nghĩa nút ngã tư
-│   ├── edges.edg.xml          # Định nghĩa các tuyến đường
-│   ├── connections.con.xml    # Định nghĩa các hướng rẽ và kết nối làn
-│   ├── tll.tll.xml            # Định nghĩa chu kỳ và pha đèn giao thông
-│   ├── routes.rou.xml         # Định nghĩa luồng giao thông và các loại xe
-│   ├── gui-settings.xml       # Cấu hình góc nhìn, độ thu phóng, chế độ hiển thị trên SUMO GUI
-│   ├── intersection.net.xml   # Bản đồ mạng lưới giao thông (được tạo tự động từ netconvert)
-│   └── simulation.sumocfg     # File cấu hình tổng hợp cho SUMO
-├── build_net.py               # Script tự động biên dịch mạng lưới SUMO từ XML sang .net.xml
-├── test_env.py                # Script chạy kiểm thử mô phỏng và hiển thị ma trận 2D
-├── config.yaml                # File cấu hình chung (thông số env, reward, DQN hyperparameters)
-├── requirements.txt           # Danh sách các thư viện Python cần thiết
-└── setup.bat                  # Script tự động tạo môi trường ảo và cài đặt thư viện cho Windows
+│   ├── nodes.nod.xml          # Intersection node definitions
+│   ├── edges.edg.xml          # Road network edge definitions
+│   ├── connections.con.xml    # Lane connections and turn logic definitions
+│   ├── tll.tll.xml            # Traffic light cycle and phase definitions
+│   ├── routes.rou.xml         # Vehicle types and random traffic flow definitions
+│   ├── gui-settings.xml       # Viewport, zoom, and display scheme configurations for SUMO GUI
+│   ├── intersection.net.xml   # Compiled traffic network file (generated by netconvert)
+│   └── simulation.sumocfg     # Master SUMO configuration file
+├── build_net.py               # Automated script to compile SUMO network from XML configs to .net.xml
+├── test_env.py                # Verification script to run simulation and visualize 2D vehicle grid
+├── config.yaml                # Master configuration file (environment, reward, DQN hyperparameters)
+├── requirements.txt           # Required Python packages
+└── setup.bat                  # Windows setup script to create virtual environment and install packages
 ```
 
 ---
 
-## 🛠 Hướng dẫn Cài đặt & Sử dụng
+## 🛠 Setup & Installation Guide
 
-### 1. Yêu cầu Tiền đề (Prerequisites)
+### 1. Prerequisites
 1. **Python 3.9 - 3.11**
-2. **Eclipse SUMO Simulator** (bắt buộc phải có trong biến môi trường `PATH` hoặc `SUMO_HOME`):
-   * *Cách cài đặt trên Windows qua terminal:*
+2. **Eclipse SUMO Simulator** (must be installed and added to `PATH` or `SUMO_HOME` environment variable):
+   * *Installation on Windows via terminal:*
      ```powershell
      winget install DLR.SUMO
      ```
-   * Hoặc tải bộ cài từ: [Trang tải xuống SUMO](https://sumo.dlr.de/docs/Downloads.php)
+   * Or download the installer from: [SUMO Download Page](https://sumo.dlr.de/docs/Downloads.php)
 
-### 2. Cài đặt Môi trường Python
-Chạy file `setup.bat` (hoặc chạy các lệnh thủ công dưới đây) để tạo `venv` và cài đặt thư viện (bao gồm PyTorch CPU, Gymnasium, Stable-Baselines3, TraCI,...):
+### 2. Python Environment Setup
+Run `setup.bat` (or run the commands manually below) to create a virtual environment and install required libraries (PyTorch CPU, Gymnasium, Stable-Baselines3, TraCI, etc.):
 ```powershell
-# Tạo môi trường ảo
+# Create virtual environment
 python -m venv venv
 
-# Kích hoạt môi trường ảo (PowerShell)
+# Activate virtual environment (PowerShell)
 .\venv\Scripts\Activate.ps1
 
-# Cài đặt thư viện
+# Install packages
 pip install --upgrade pip
 pip install -r requirements.txt
 ```
 
-### 3. Kiểm thử Môi trường & Quan sát với SUMO GUI
-Để xem xe cộ di chuyển trực quan trên màn hình mô phỏng đồ họa và in ma trận xe 2D ra Terminal:
-1. Mở file `config.yaml`, đảm bảo `use_gui: true`:
+### 3. Environment Verification & GUI Visualization
+To observe vehicle movements visually on the SUMO GUI and print the 2D vehicle matrix to the terminal:
+1. Open `config.yaml` and verify `use_gui: true`:
    ```yaml
    env:
      use_gui: true
    ```
-2. Chạy script kiểm thử:
+2. Run the test script:
    ```powershell
    venv\Scripts\python.exe test_env.py
    ```
 
-### 4. Huấn luyện Mô hình AI (Training)
-Để quá trình huấn luyện diễn ra với tốc độ tối đa (Headless C++ simulation, không tiêu tốn RAM/GPU cho GUI):
-1. Chuyển `use_gui: false` trong file `config.yaml`:
+### 4. AI Model Training
+To achieve maximum training speed (Headless C++ simulation without rendering overhead):
+1. Set `use_gui: false` in `config.yaml`:
    ```yaml
    env:
      use_gui: false
    ```
-2. Chạy script huấn luyện DQN:
+2. Run the DQN training script:
    ```powershell
    venv\Scripts\python.exe agent/train.py
    ```
-   * Mô hình sẽ tự động lưu lại định kỳ sau mỗi 20,000 bước vào thư mục `models/` và ghi nhận log huấn luyện vào `logs/` (để xem bằng `tensorboard --logdir=logs`).
+   * The model will automatically save checkpoints every 20,000 steps into `models/` and write training metrics to `logs/` (viewable via `tensorboard --logdir=logs`).
 
 ---
 
-## 📜 Bản quyền & Giấy phép
-Dự án được phát triển phục vụ mục đích nghiên cứu học tăng cường và điều khiển giao thông thông minh.
+## 📜 License
+This project is developed for research and educational purposes in deep reinforcement learning and intelligent traffic control.

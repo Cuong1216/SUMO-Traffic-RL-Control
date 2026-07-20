@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Cấu hình tổng hợp cho mô phỏng SUMO -->
+<!-- Master configuration file for SUMO simulation -->
 <configuration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/sumoConfiguration.xsd">
     <input>
         <net-file value="intersection.net.xml"/>
@@ -13,7 +13,7 @@
     </time>
 
     <processing>
-        <!-- Tránh xung đột va chạm chết cứng (cho phép xe luân chuyển thực tế trong test) -->
+        <!-- Prevent deadlock collisions (allows realistic vehicle teleporting when stuck during testing) -->
         <time-to-teleport value="300"/>
     </processing>
 

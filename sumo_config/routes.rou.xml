@@ -1,30 +1,30 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Định nghĩa loại xe và luồng giao thông ngẫu nhiên cho ngã tư -->
+<!-- Define vehicle types and randomized traffic flows for the intersection -->
 <routes xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/routes_file.xsd">
-    <!-- 3 Loại phương tiện tham chiếu theo mã hóa ma trận lưới -->
-    <!-- 1 = Xe máy -->
+    <!-- 3 Vehicle types corresponding to our 2D grid matrix encoding -->
+    <!-- 1 = Motorcycle -->
     <vType id="motorcycle" vClass="motorcycle" length="2.0" width="1.0" accel="3.0" decel="4.5" maxSpeed="15.0" guiShape="motorcycle" color="yellow"/>
-    <!-- 2 = Ô tô -->
+    <!-- 2 = Passenger Car -->
     <vType id="passenger" vClass="passenger" length="4.5" width="1.8" accel="2.6" decel="4.5" maxSpeed="13.89" guiShape="passenger" color="cyan"/>
-    <!-- 3 = Xe buýt -->
+    <!-- 3 = Bus -->
     <vType id="bus" vClass="bus" length="12.0" width="2.5" accel="1.2" decel="3.5" maxSpeed="11.0" guiShape="bus" color="red"/>
 
-    <!-- Luồng phát sinh ngẫu nhiên từ hướng Bắc (North → South/East/West) -->
+    <!-- Random flows spawning from North (North -> South/East/West) -->
     <flow id="f_N_moto" type="motorcycle" begin="0" end="3600" probability="0.15" from="N2J0" to="J02S" departSpeed="max" departLane="best"/>
     <flow id="f_N_car"  type="passenger"  begin="0" end="3600" probability="0.20" from="N2J0" to="J02S" departSpeed="max" departLane="best"/>
     <flow id="f_N_bus"  type="bus"        begin="0" end="3600" probability="0.03" from="N2J0" to="J02S" departSpeed="max" departLane="best"/>
 
-    <!-- Luồng phát sinh ngẫu nhiên từ hướng Nam (South → North/East/West) -->
+    <!-- Random flows spawning from South (South -> North/East/West) -->
     <flow id="f_S_moto" type="motorcycle" begin="0" end="3600" probability="0.15" from="S2J0" to="J02N" departSpeed="max" departLane="best"/>
     <flow id="f_S_car"  type="passenger"  begin="0" end="3600" probability="0.20" from="S2J0" to="J02N" departSpeed="max" departLane="best"/>
     <flow id="f_S_bus"  type="bus"        begin="0" end="3600" probability="0.03" from="S2J0" to="J02N" departSpeed="max" departLane="best"/>
 
-    <!-- Luồng phát sinh ngẫu nhiên từ hướng Đông (East → West/North/South) -->
+    <!-- Random flows spawning from East (East -> West/North/South) -->
     <flow id="f_E_moto" type="motorcycle" begin="0" end="3600" probability="0.18" from="E2J0" to="J02W" departSpeed="max" departLane="best"/>
     <flow id="f_E_car"  type="passenger"  begin="0" end="3600" probability="0.25" from="E2J0" to="J02W" departSpeed="max" departLane="best"/>
     <flow id="f_E_bus"  type="bus"        begin="0" end="3600" probability="0.04" from="E2J0" to="J02W" departSpeed="max" departLane="best"/>
 
-    <!-- Luồng phát sinh ngẫu nhiên từ hướng Tây (West → East/North/South) -->
+    <!-- Random flows spawning from West (West -> East/North/South) -->
     <flow id="f_W_moto" type="motorcycle" begin="0" end="3600" probability="0.18" from="W2J0" to="J02E" departSpeed="max" departLane="best"/>
     <flow id="f_W_car"  type="passenger"  begin="0" end="3600" probability="0.25" from="W2J0" to="J02E" departSpeed="max" departLane="best"/>
     <flow id="f_W_bus"  type="bus"        begin="0" end="3600" probability="0.04" from="W2J0" to="J02E" departSpeed="max" departLane="best"/>
