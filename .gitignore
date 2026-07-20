@@ -1,0 +1,20 @@
+# Virtual Environment
+venv/
+.venv/
+ENV/
+/.env
+
+# Python Cache & Bytecode
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+
+# RL Training Logs & Saved Models (Không push file training nặng hoặc tensorboard log lên Git)
+logs/
+models/
+*.zip
+
+# OS generated files
+.DS_Store
+Thumbs.db

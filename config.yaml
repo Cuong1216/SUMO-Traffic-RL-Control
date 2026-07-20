@@ -1,0 +1,32 @@
+# ==========================================
+# CẤU HÌNH DỰ ÁN TỐI ƯU ĐÈN GIAO THÔNG (RL)
+# ==========================================
+
+env:
+  sumo_cfg: "sumo_config/simulation.sumocfg"
+  use_gui: false              # Bật true để xem hình ảnh SUMO GUI khi test
+  tl_id: "J0"                 # ID ngã tư có đèn tín hiệu trong SUMO
+  countdown_duration: 10      # Ràng buộc bắt buộc: Thời gian đếm ngược (giây) cho pha chuyển tiếp
+  
+grid:
+  cell_length: 7.0            # Chiều dài mỗi ô trên lưới (mét)
+  n_cells: 10                 # Số ô (cells) mỗi làn đường → quan sát được 70m tính từ ngã tư
+  vehicle_type_code:          # Mã hóa ma trận 2D
+    empty: 0
+    motorcycle: 1
+    passenger: 2
+    bus: 3
+
+reward:
+  alpha: 0.4                  # Trọng số cho lượng xe chờ (Queue length)
+  beta: 0.6                   # Trọng số cho tổng thời gian chờ (Waiting time)
+
+agent:
+  algorithm: "DQN"            # Thuật toán: DQN (hoặc PPO)
+  learning_rate: 0.0001
+  buffer_size: 50000          # Giới hạn buffer size để phù hợp RAM 8GB
+  batch_size: 64
+  gamma: 0.99
+  total_timesteps: 100000
+  log_dir: "./logs/"
+  model_save_dir: "./models/"

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Cấu hình pha đèn tín hiệu (4 pha: 2 pha xanh AI kiểm soát, 2 pha vàng đếm ngược 10s cố định) -->
+<tlLogics xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/tllogic_file.xsd">
+    <tlLogic id="J0" type="static" programID="0" offset="0">
+        <!-- Phase 0: Xanh Bắc - Nam (AI kiểm soát thời lượng) -->
+        <phase duration="30" state="GGrrGGrrGGrrGGrr"/>
+        
+        <!-- Phase 1: Vàng Bắc - Nam đếm ngược 10 giây (Ràng buộc cố định không cho AI can thiệp) -->
+        <phase duration="10" state="yyrryyrryyrryyrr"/>
+        
+        <!-- Phase 2: Xanh Đông - Tây (AI kiểm soát thời lượng) -->
+        <phase duration="30" state="rrGGrrGGrrGGrrGG"/>
+        
+        <!-- Phase 3: Vàng Đông - Tây đếm ngược 10 giây (Ràng buộc cố định không cho AI can thiệp) -->
+        <phase duration="10" state="rryyrryyrryyrryy"/>
+    </tlLogic>
+</tlLogics>
