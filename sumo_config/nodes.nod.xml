@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Định nghĩa các nút (Nodes) cho ngã tư 4 hướng -->
+<!-- Define intersection nodes for our 4-way intersection -->
 <nodes xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/nodes_file.xsd">
-    <!-- Nút trung tâm J0 có đèn giao thông (traffic_light) -->
+    <!-- Center junction J0 equipped with traffic light logic -->
     <node id="J0" x="0.00" y="0.00" type="traffic_light"/>
     
-    <!-- 4 Nút ngoại vi cách trung tâm 150m -->
+    <!-- 4 Peripheral entry/exit nodes located 150m from center -->
     <node id="N" x="0.00" y="150.00" type="priority"/>
     <node id="S" x="0.00" y="-150.00" type="priority"/>
     <node id="E" x="150.00" y="0.00" type="priority"/>

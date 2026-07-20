@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <viewsettings xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/viewsettings_file.xsd">
-    <!-- Chọn chế độ hiển thị thực tế (real world) hoặc chuẩn rõ nét -->
+    <!-- Select realistic display scheme (real world) or sharp standard presentation -->
     <scheme name="real world"/>
-    <!-- Canh giữa ngã tư J0 tại tọa độ (150, 150) với mức zoom 250% -->
+    <!-- Center intersection J0 at coordinates (150, 150) with 250% zoom level -->
     <viewport zoom="250.00" x="150.00" y="150.00"/>
-    <!-- Đặt độ trễ 100ms cho mỗi bước simulation trên GUI để dễ quan sát xe chuyển động -->
+    <!-- Set 100ms delay per step on GUI for smooth visual tracking of moving vehicles -->
     <delay value="100"/>
-    <!-- Hiển thị ngã tư và tín hiệu đèn giao thông rõ ràng -->
+    <!-- Display junction names and traffic light logic state indicators -->
     <junctions junctionName_show="1" junctionName_size="35" tlLogic_show="1"/>
-    <!-- Hiển thị các phương tiện với kích thước và màu sắc rõ ràng theo routes.rou.xml -->
+    <!-- Display vehicles clearly with sizes and colors configured in routes.rou.xml -->
     <vehicles vehicleName_show="0" minSize="1.5" vehicleType_show="1" vehicleType_size="25"/>
 </viewsettings>

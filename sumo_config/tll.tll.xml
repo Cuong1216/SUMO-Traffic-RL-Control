@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Cấu hình pha đèn tín hiệu (4 pha: 2 pha xanh AI kiểm soát, 2 pha vàng đếm ngược 10s cố định) -->
+<!-- Traffic light phase configurations (4 phases: 2 green phases controlled by AI, 2 yellow countdown phases fixed at 10s) -->
 <tlLogics xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/tllogic_file.xsd">
     <tlLogic id="J0" type="static" programID="0" offset="0">
-        <!-- Phase 0: Xanh Bắc - Nam (AI kiểm soát thời lượng) -->
+        <!-- Phase 0: Green North - South (AI controls duration) -->
         <phase duration="30" state="GGrrGGrrGGrrGGrr"/>
         
-        <!-- Phase 1: Vàng Bắc - Nam đếm ngược 10 giây (Ràng buộc cố định không cho AI can thiệp) -->
+        <!-- Phase 1: Yellow North - South 10-second countdown (Fixed safety constraint preventing AI intervention) -->
         <phase duration="10" state="yyrryyrryyrryyrr"/>
         
-        <!-- Phase 2: Xanh Đông - Tây (AI kiểm soát thời lượng) -->
+        <!-- Phase 2: Green East - West (AI controls duration) -->
         <phase duration="30" state="rrGGrrGGrrGGrrGG"/>
         
-        <!-- Phase 3: Vàng Đông - Tây đếm ngược 10 giây (Ràng buộc cố định không cho AI can thiệp) -->
+        <!-- Phase 3: Yellow East - West 10-second countdown (Fixed safety constraint preventing AI intervention) -->
         <phase duration="10" state="rryyrryyrryyrryy"/>
     </tlLogic>
 </tlLogics>

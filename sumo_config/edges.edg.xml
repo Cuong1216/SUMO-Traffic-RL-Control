@@ -1,19 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Định nghĩa các đường (Edges): mỗi hướng vào/ra có 2 làn xe -->
+<!-- Define road network edges: each incoming/outgoing direction has 2 lanes -->
 <edges xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/edges_file.xsd">
-    <!-- Hướng Bắc (North) -->
+    <!-- North direction -->
     <edge id="N2J0" from="N" to="J0" priority="1" numLanes="2" speed="13.89"/>
     <edge id="J02N" from="J0" to="N" priority="1" numLanes="2" speed="13.89"/>
 
-    <!-- Hướng Nam (South) -->
+    <!-- South direction -->
     <edge id="S2J0" from="S" to="J0" priority="1" numLanes="2" speed="13.89"/>
     <edge id="J02S" from="J0" to="S" priority="1" numLanes="2" speed="13.89"/>
 
-    <!-- Hướng Đông (East) -->
+    <!-- East direction -->
     <edge id="E2J0" from="E" to="J0" priority="1" numLanes="2" speed="13.89"/>
     <edge id="J02E" from="J0" to="E" priority="1" numLanes="2" speed="13.89"/>
 
-    <!-- Hướng Tây (West) -->
+    <!-- West direction -->
     <edge id="W2J0" from="W" to="J0" priority="1" numLanes="2" speed="13.89"/>
     <edge id="J02W" from="J0" to="W" priority="1" numLanes="2" speed="13.89"/>
 </edges>
