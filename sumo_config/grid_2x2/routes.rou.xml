@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Define vehicle types and traffic flows across the 2x2 grid network -->
+<routes xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/routes_file.xsd">
+    <!-- Vehicle types corresponding to 2D grid matrix encoding -->
+    <vType id="motorcycle" vClass="motorcycle" length="2.0" width="1.0" accel="3.0" decel="4.5" maxSpeed="15.0" guiShape="motorcycle" color="yellow"/>
+    <vType id="passenger"  vClass="passenger"  length="4.5" width="1.8" accel="2.6" decel="4.5" maxSpeed="13.89" guiShape="passenger" color="cyan"/>
+    <vType id="bus"        vClass="bus"        length="12.0" width="2.5" accel="1.2" decel="3.5" maxSpeed="11.0" guiShape="bus" color="red"/>
+
+    <!-- Flows across J00 & J01 (Top Row North entries) -->
+    <flow id="f_N0_S0" type="passenger"  begin="0" end="3600" probability="0.15" from="N0_J00" to="J10_S0" departSpeed="max" departLane="best"/>
+    <flow id="f_N0_E1" type="motorcycle" begin="0" end="3600" probability="0.10" from="N0_J00" to="J11_E1" departSpeed="max" departLane="best"/>
+    <flow id="f_N1_S1" type="passenger"  begin="0" end="3600" probability="0.15" from="N1_J01" to="J11_S1" departSpeed="max" departLane="best"/>
+    <flow id="f_N1_W0" type="bus"        begin="0" end="3600" probability="0.04" from="N1_J01" to="J00_W0" departSpeed="max" departLane="best"/>
+
+    <!-- Flows across J10 & J11 (Bottom Row South entries) -->
+    <flow id="f_S0_N0" type="passenger"  begin="0" end="3600" probability="0.15" from="S0_J10" to="J00_N0" departSpeed="max" departLane="best"/>
+    <flow id="f_S0_E0" type="motorcycle" begin="0" end="3600" probability="0.10" from="S0_J10" to="J01_E0" departSpeed="max" departLane="best"/>
+    <flow id="f_S1_N1" type="passenger"  begin="0" end="3600" probability="0.15" from="S1_J11" to="J01_N1" departSpeed="max" departLane="best"/>
+    <flow id="f_S1_W1" type="bus"        begin="0" end="3600" probability="0.04" from="S1_J11" to="J10_W1" departSpeed="max" departLane="best"/>
+
+    <!-- Flows across West entries (W0_J00, W1_J10) going East across horizontal green wave links -->
+    <flow id="f_W0_E0_car" type="passenger"  begin="0" end="3600" probability="0.20" from="W0_J00" to="J01_E0" departSpeed="max" departLane="best"/>
+    <flow id="f_W0_E1_bus" type="bus"        begin="0" end="3600" probability="0.03" from="W0_J00" to="J11_E1" departSpeed="max" departLane="best"/>
+    <flow id="f_W1_E1_car" type="passenger"  begin="0" end="3600" probability="0.20" from="W1_J10" to="J11_E1" departSpeed="max" departLane="best"/>
+    <flow id="f_W1_N0_mot" type="motorcycle" begin="0" end="3600" probability="0.12" from="W1_J10" to="J00_N0" departSpeed="max" departLane="best"/>
+
+    <!-- Flows across East entries (E0_J01, E1_J11) going West across horizontal green wave links -->
+    <flow id="f_E0_W0_car" type="passenger"  begin="0" end="3600" probability="0.20" from="E0_J01" to="J00_W0" departSpeed="max" departLane="best"/>
+    <flow id="f_E0_S0_mot" type="motorcycle" begin="0" end="3600" probability="0.12" from="E0_J01" to="J10_S0" departSpeed="max" departLane="best"/>
+    <flow id="f_E1_W1_car" type="passenger"  begin="0" end="3600" probability="0.20" from="E1_J11" to="J10_W1" departSpeed="max" departLane="best"/>
+    <flow id="f_E1_N1_bus" type="bus"        begin="0" end="3600" probability="0.03" from="E1_J11" to="J01_N1" departSpeed="max" departLane="best"/>
+</routes>

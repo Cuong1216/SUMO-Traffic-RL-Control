@@ -1,13 +1,17 @@
 """
 Gymnasium RL Environment: TrafficEnv
 - State (Observation): 2D Grid matrix (8 lanes x 10 cells) + Current phase + Remaining countdown duration.
-- Action: 0 = Keep current green phase, 1 = Switch to next phase (triggers 10s countdown).
+- Action: 0 = Keep current green phase (advances action_step_delta seconds), 1 = Switch phase (fast-forwards 10s countdown).
 - Reward: -(alpha * queue_length + beta * waiting_time).
-- Constraint: 10-second lock (Countdown Lock) preventing AI intervention during yellow phases.
+- Optimizations: libsumo/traci fallback, unique process sim_label, yellow countdown fast-forward, frame skipping.
 """
 
 import os
 import sys
+try:
+    sys.stdout.reconfigure(encoding='utf-8')
+except Exception:
+    pass
 import gymnasium as gym
 from gymnasium import spaces
 import numpy as np
@@ -16,10 +20,8 @@ import yaml
 # Ensure TraCI is importable from SUMO_HOME
 if "SUMO_HOME" in os.environ:
     tools = os.path.join(os.environ["SUMO_HOME"], "tools")
-    sys.path.append(tools)
-else:
-    # Attempt direct import assuming traci is installed via pip
-    pass
+    if tools not in sys.path:
+        sys.path.append(tools)
 
 import traci
 
@@ -37,15 +39,20 @@ class TrafficEnv(gym.Env):
 
         self.sumo_cfg = os.path.abspath(self.cfg["env"]["sumo_cfg"])
         self.use_gui = self.cfg["env"]["use_gui"]
+        self.use_libsumo = self.cfg["env"].get("use_libsumo", True)
         self.tl_id = self.cfg["env"]["tl_id"]
         self.countdown_duration = self.cfg["env"]["countdown_duration"]
+        self.action_step_delta = self.cfg["env"].get("action_step_delta", 3)
 
         # Automatically recompile the intersection network (.net.xml) from XML config files
+        # Only recompile in main process / rank 0 or if intersection.net.xml does not exist yet
         try:
-            from build_net import build_network
-            build_network()
-        except Exception as e:
-            print(f"⚠️ Note on automatic SUMO network compilation: {e}")
+            net_file = os.path.join(os.path.dirname(os.path.dirname(__file__)), "sumo_config", "intersection.net.xml")
+            if not os.path.exists(net_file) or os.environ.get("SUMO_WORKER_RANK", "0") == "0":
+                from build_net import build_network
+                build_network()
+        except Exception:
+            pass
         
         self.cell_length = self.cfg["grid"]["cell_length"]
         self.n_cells = self.cfg["grid"]["n_cells"]
@@ -70,7 +77,10 @@ class TrafficEnv(gym.Env):
         
         self.all_lanes = []
         self.current_step = 0
-        self.sim_label = f"sim_{id(self)}"
+        # Unique label per process & instance to prevent port conflicts in SubprocVecEnv
+        self.sim_label = f"sim_{os.getpid()}_{id(self)}"
+        self.using_libsumo = False
+        self.conn = None
 
     def _get_sumo_binary(self) -> str:
         import shutil
@@ -130,42 +140,54 @@ class TrafficEnv(gym.Env):
         import time
         time.sleep(0.5)  # Wait briefly for OS to release socket port
 
+    def _init_library(self):
+        """Choose between libsumo (fast C++ embedding) and traci (socket IPC)."""
+        if not self.use_gui and self.use_libsumo:
+            try:
+                import libsumo
+                self.traci_lib = libsumo
+                self.using_libsumo = True
+                return
+            except (ImportError, Exception):
+                self.using_libsumo = False
+        self.traci_lib = traci
+        self.using_libsumo = False
+
     def reset(self, *, seed=None, options=None):
         super().reset(seed=seed)
         
-        # Close previous TraCI connection if open
-        try:
-            if hasattr(self, "conn") and self.conn:
-                self.conn.close()
-        except Exception:
-            pass
-        try:
-            if traci.isLoaded():
-                traci.close()
-        except Exception:
-            pass
+        # Close previous connection if open
+        self.close()
+        self._init_library()
 
-        # Kill any lingering SUMO processes to avoid "TraCI server already finished" errors
-        self._kill_old_sumo_processes()
-
-        sumo_binary = self._get_sumo_binary()
-
-        cmd = [
-            sumo_binary,
-            "-c", self.sumo_cfg,
-            "--no-warnings", "true",
-            "--start", "true",
-            # Do not use --quit-on-end so that GUI stays responsive during inspection
-            "--step-length", "1.0"
-        ]
-        
-        traci.start(cmd, label=self.sim_label)
-        self.conn = traci.getConnection(self.sim_label)
+        if not self.using_libsumo:
+            # Do NOT kill system-wide sumo.exe processes when running parallel workers inside SubprocVecEnv,
+            # because taskkill /F /IM sumo.exe would kill the active sumo instances of all other parallel workers!
+            if os.environ.get("IN_VEC_ENV", "0") != "1":
+                self._kill_old_sumo_processes()
+            sumo_binary = self._get_sumo_binary()
+            cmd = [
+                sumo_binary,
+                "-c", self.sumo_cfg,
+                "--no-warnings", "true",
+                "--start", "true",
+                "--step-length", "1.0"
+            ]
+            self.traci_lib.start(cmd, label=self.sim_label)
+            self.conn = self.traci_lib.getConnection(self.sim_label)
+        else:
+            cmd = [
+                "sumo",
+                "-c", self.sumo_cfg,
+                "--no-warnings", "true",
+                "--step-length", "1.0"
+            ]
+            self.traci_lib.start(cmd)
+            self.conn = self.traci_lib  # libsumo module acts directly as connection
         
         # Retrieve lanes controlled by traffic light J0
         # Filter and sort to guarantee fixed order inside the observation matrix
         raw_controlled = self.conn.trafficlight.getControlledLanes(self.tl_id)
-        # Only retain incoming lanes to the intersection (N2J0, S2J0, E2J0, W2J0)
         incoming_prefixes = ("N2J0", "S2J0", "E2J0", "W2J0")
         self.all_lanes = sorted(list(set([l for l in raw_controlled if l.startswith(incoming_prefixes)])))
         
@@ -187,28 +209,39 @@ class TrafficEnv(gym.Env):
     def step(self, action: int):
         current_phase = self.conn.trafficlight.getPhase(self.tl_id)
         
-        # --- CRITICAL CONSTRAINT: Countdown Lock ---
-        # If currently in a yellow phase (Phase 1 or Phase 3), the agent decision is LOCKED.
-        # The simulation continues stepping forward until the 10-second yellow phase concludes.
+        # --- CRITICAL CONSTRAINT & OPTIMIZATION 1: Countdown Lock + Fast-Forward ---
+        # If currently in a yellow phase (Phase 1 or Phase 3), fast forward until yellow finishes.
         if current_phase in self.yellow_phases:
-            self.conn.simulationStep()
+            while current_phase in self.yellow_phases and self.current_step < 3600:
+                self.conn.simulationStep()
+                self.current_step += 1
+                current_phase = self.conn.trafficlight.getPhase(self.tl_id)
         else:
-            # The agent is allowed to make decisions only during Green phases (Phase 0 or Phase 2)
+            # Agent makes decision during Green phases (Phase 0 or Phase 2)
             if action == 1:
                 # Decision: SWITCH PHASE -> Transition to the next Yellow phase (1 or 3)
                 next_phase = (current_phase + 1) % 4
                 self.conn.trafficlight.setPhase(self.tl_id, next_phase)
                 self.conn.trafficlight.setPhaseDuration(self.tl_id, self.countdown_duration)
+                
+                # FAST-FORWARD: Advance simulation through the entire 10s yellow countdown duration
+                for _ in range(self.countdown_duration):
+                    if self.current_step >= 3600:
+                        break
+                    self.conn.simulationStep()
+                    self.current_step += 1
             else:
                 # Decision: KEEP PHASE -> Maintain current green phase
-                pass
-            
-            self.conn.simulationStep()
+                # OPTIMIZATION 4: Action Repeat / Frame Skipping for green phase
+                for _ in range(self.action_step_delta):
+                    if self.current_step >= 3600:
+                        break
+                    self.conn.simulationStep()
+                    self.current_step += 1
 
         obs = self._get_obs()
         reward = self._compute_reward()
         
-        self.current_step += 1
         # Termination condition: terminate only after at least 10 steps (allowing vehicles to spawn)
         # when no vehicles remain expected, or when reaching the maximum duration limit of 3600 steps
         sim_ended = (
@@ -266,27 +299,70 @@ class TrafficEnv(gym.Env):
 
     def _compute_reward(self) -> float:
         """
-        Compute reward:
-        Reward = - (alpha * queue_length + beta * total_waiting_time)
+        Redesigned 3-component Reward Function to break saturation at -1.46e6:
+
+        Component 1 — THROUGHPUT BONUS (+):
+            Reward for every vehicle that departed/exited the intersection this step.
+            This is the KEY positive signal that was missing — it gives the AI direct
+            credit assignment for making good switching decisions.
+
+        Component 2 — PRESSURE PENALTY (-):
+            Penalizes queue and waiting time, normalized per lane so the reward scale
+            stays stable regardless of how many vehicles are in the simulation.
+            Dividing waiting_time by 100.0 prevents it from dominating the gradient.
+
+        Component 3 — SWITCH COST (-):
+            Small penalty when the phase changes to the next GREEN phase (not yellow).
+            This discourages rapid phase oscillation that causes unnecessary yellow delays.
         """
+        # --- Component 1: THROUGHPUT BONUS ---
+        throughput_weight = self.cfg["reward"].get("throughput_weight", 2.0)
+        try:
+            vehicles_departed = self.conn.simulation.getDepartedNumber()
+        except Exception:
+            vehicles_departed = 0
+        throughput_bonus = vehicles_departed * throughput_weight
+
+        # --- Component 2: NORMALIZED PRESSURE PENALTY ---
         total_queue = 0.0
         total_wait = 0.0
-        
         for lane_id in self.all_lanes:
             try:
                 total_queue += self.conn.lane.getLastStepHaltingNumber(lane_id)
                 total_wait += self.conn.lane.getWaitingTime(lane_id)
             except Exception:
                 continue
-                
-        reward = -(self.alpha * total_queue + self.beta * total_wait)
+        n_lanes = max(1, len(self.all_lanes))
+        pressure_penalty = -(
+            self.alpha * (total_queue / n_lanes)
+            + self.beta * (total_wait / n_lanes / 100.0)
+        )
+
+        # --- Component 3: SWITCH COST ---
+        switch_penalty_val = self.cfg["reward"].get("switch_penalty", -2.0)
+        try:
+            current_phase = self.conn.trafficlight.getPhase(self.tl_id)
+        except Exception:
+            current_phase = getattr(self, "_last_phase", 0)
+        switch_cost = 0.0
+        if (hasattr(self, "_last_phase")
+                and current_phase != self._last_phase
+                and current_phase not in self.yellow_phases):
+            switch_cost = switch_penalty_val
+        self._last_phase = current_phase
+
+        reward = throughput_bonus + pressure_penalty + switch_cost
         return float(reward)
 
     def close(self):
         try:
-            if hasattr(self, "conn") and self.conn:
+            if hasattr(self, "conn") and self.conn and not self.using_libsumo:
                 self.conn.close()
-            elif traci.isLoaded():
-                traci.close()
         except Exception:
             pass
+        try:
+            if hasattr(self, "traci_lib") and hasattr(self.traci_lib, "isLoaded") and self.traci_lib.isLoaded():
+                self.traci_lib.close()
+        except Exception:
+            pass
+        self.conn = None

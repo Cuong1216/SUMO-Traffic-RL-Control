@@ -1,0 +1,38 @@
+# ==========================================
+# MARL 2x2 GRID TRAFFIC CONTROL CONFIG
+# ==========================================
+
+env:
+  sumo_cfg: "sumo_config/grid_2x2/simulation.sumocfg"
+  use_gui: false
+  tl_ids: ["J00", "J01", "J10", "J11"]
+  countdown_duration: 10
+  action_step_delta: 3
+  max_steps: 3600
+
+grid:
+  cell_length: 7.0
+  n_cells: 10
+  vehicle_type_code:
+    empty: 0
+    motorcycle: 1
+    passenger: 2
+    bus: 3
+
+reward:
+  alpha: 0.4
+  beta: 0.6
+  throughput_weight: 2.0
+  switch_penalty: -2.0
+  local_weight: 0.7
+  global_weight: 0.3
+
+agent:
+  algorithm: "DQN"
+  learning_rate: 0.0001
+  buffer_size: 20000
+  batch_size: 64
+  gamma: 0.99
+  total_timesteps: 500000
+  log_dir: "./logs/marl/"
+  model_save_dir: "./models/marl/"

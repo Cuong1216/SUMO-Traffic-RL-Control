@@ -1,6 +1,6 @@
 """
-Script: build_net.py
-Compiles XML configuration files (.nod, .edg, .con, .tll) into the official SUMO network (intersection.net.xml).
+Script: build_net_grid.py
+Compiles XML configuration files (.nod, .edg, .con, .tll) inside sumo_config/grid_2x2/ into grid_2x2.net.xml.
 """
 import os
 import subprocess
@@ -34,13 +34,12 @@ def get_netconvert_binary() -> str:
             return candidate
     return "netconvert"
 
-def build_network():
-    cfg_dir = os.path.join(os.path.dirname(__file__), "sumo_config")
-    net_file = os.path.join(cfg_dir, "intersection.net.xml")
+def build_grid_network():
+    cfg_dir = os.path.join(os.path.dirname(__file__), "sumo_config", "grid_2x2")
+    net_file = os.path.join(cfg_dir, "grid_2x2.net.xml")
     
     netconvert_bin = get_netconvert_binary()
     
-    # netconvert command arguments
     cmd = [
         netconvert_bin,
         "--node-files", os.path.join(cfg_dir, "nodes.nod.xml"),
@@ -51,18 +50,17 @@ def build_network():
         "--no-warnings", "true"
     ]
     
-    print("🚦 Compiling SUMO intersection network J0...")
+    print("🚦 Compiling SUMO 2x2 Grid network (J00, J01, J10, J11)...")
     try:
         result = subprocess.run(cmd, check=True, capture_output=True, text=True)
-        print(f"✅ Network file successfully generated: {net_file}")
+        print(f"✅ Grid network file successfully generated: {net_file}")
     except FileNotFoundError:
         print("❌ ERROR: 'netconvert' executable not found in PATH.")
         print("👉 Please install SUMO (e.g. winget install DLR.SUMO) or add SUMO/bin to your PATH environment variable.")
-        print("👉 Then rerun: python build_net.py")
         sys.exit(1)
     except subprocess.CalledProcessError as e:
-        print(f"❌ Error during netconvert execution:\n{e.stderr}")
+        print(f"❌ Error during netconvert execution:\n{e.stderr}\n{e.stdout}")
         sys.exit(1)
 
 if __name__ == "__main__":
-    build_network()
+    build_grid_network()

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Traffic light logic configurations for 2x2 grid (4 traffic lights: J00, J01, J10, J11) -->
+<tlLogics xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/tllogic_file.xsd">
+    <tlLogic id="J00" type="static" programID="0" offset="0">
+        <phase duration="30" state="GGrrGGrrGGrrGGrr"/>
+        <phase duration="10" state="yyrryyrryyrryyrr"/>
+        <phase duration="30" state="rrGGrrGGrrGGrrGG"/>
+        <phase duration="10" state="rryyrryyrryyrryy"/>
+    </tlLogic>
+    <tlLogic id="J01" type="static" programID="0" offset="0">
+        <phase duration="30" state="GGrrGGrrGGrrGGrr"/>
+        <phase duration="10" state="yyrryyrryyrryyrr"/>
+        <phase duration="30" state="rrGGrrGGrrGGrrGG"/>
+        <phase duration="10" state="rryyrryyrryyrryy"/>
+    </tlLogic>
+    <tlLogic id="J10" type="static" programID="0" offset="0">
+        <phase duration="30" state="GGrrGGrrGGrrGGrr"/>
+        <phase duration="10" state="yyrryyrryyrryyrr"/>
+        <phase duration="30" state="rrGGrrGGrrGGrrGG"/>
+        <phase duration="10" state="rryyrryyrryyrryy"/>
+    </tlLogic>
+    <tlLogic id="J11" type="static" programID="0" offset="0">
+        <phase duration="30" state="GGrrGGrrGGrrGGrr"/>
+        <phase duration="10" state="yyrryyrryyrryyrr"/>
+        <phase duration="30" state="rrGGrrGGrrGGrrGG"/>
+        <phase duration="10" state="rryyrryyrryyrryy"/>
+    </tlLogic>
+</tlLogics>

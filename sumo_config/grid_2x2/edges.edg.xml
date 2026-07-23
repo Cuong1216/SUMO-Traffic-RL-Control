@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Define road network edges for 2x2 grid (2 lanes per direction) -->
+<edges xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/edges_file.xsd">
+    <!-- Boundary approach edges (Boundary <-> Junction) -->
+    <!-- North boundary connections -->
+    <edge id="N0_J00" from="N0" to="J00" priority="1" numLanes="2" speed="13.89"/>
+    <edge id="J00_N0" from="J00" to="N0" priority="1" numLanes="2" speed="13.89"/>
+    <edge id="N1_J01" from="N1" to="J01" priority="1" numLanes="2" speed="13.89"/>
+    <edge id="J01_N1" from="J01" to="N1" priority="1" numLanes="2" speed="13.89"/>
+
+    <!-- South boundary connections -->
+    <edge id="S0_J10" from="S0" to="J10" priority="1" numLanes="2" speed="13.89"/>
+    <edge id="J10_S0" from="J10" to="S0" priority="1" numLanes="2" speed="13.89"/>
+    <edge id="S1_J11" from="S1" to="J11" priority="1" numLanes="2" speed="13.89"/>
+    <edge id="J11_S1" from="J11" to="S1" priority="1" numLanes="2" speed="13.89"/>
+
+    <!-- West boundary connections -->
+    <edge id="W0_J00" from="W0" to="J00" priority="1" numLanes="2" speed="13.89"/>
+    <edge id="J00_W0" from="J00" to="W0" priority="1" numLanes="2" speed="13.89"/>
+    <edge id="W1_J10" from="W1" to="J10" priority="1" numLanes="2" speed="13.89"/>
+    <edge id="J10_W1" from="J10" to="W1" priority="1" numLanes="2" speed="13.89"/>
+
+    <!-- East boundary connections -->
+    <edge id="E0_J01" from="E0" to="J01" priority="1" numLanes="2" speed="13.89"/>
+    <edge id="J01_E0" from="J01" to="E0" priority="1" numLanes="2" speed="13.89"/>
+    <edge id="E1_J11" from="E1" to="J11" priority="1" numLanes="2" speed="13.89"/>
+    <edge id="J11_E1" from="J11" to="E1" priority="1" numLanes="2" speed="13.89"/>
+
+    <!-- Inter-junction links (Where GREEN WAVE coordination happens) -->
+    <!-- Horizontal links (West <-> East between adjacent columns) -->
+    <edge id="J00_J01" from="J00" to="J01" priority="2" numLanes="2" speed="13.89"/>
+    <edge id="J01_J00" from="J01" to="J00" priority="2" numLanes="2" speed="13.89"/>
+    <edge id="J10_J11" from="J10" to="J11" priority="2" numLanes="2" speed="13.89"/>
+    <edge id="J11_J10" from="J11" to="J10" priority="2" numLanes="2" speed="13.89"/>
+
+    <!-- Vertical links (North <-> South between adjacent rows) -->
+    <edge id="J00_J10" from="J00" to="J10" priority="2" numLanes="2" speed="13.89"/>
+    <edge id="J10_J00" from="J10" to="J00" priority="2" numLanes="2" speed="13.89"/>
+    <edge id="J01_J11" from="J01" to="J11" priority="2" numLanes="2" speed="13.89"/>
+    <edge id="J11_J01" from="J11" to="J01" priority="2" numLanes="2" speed="13.89"/>
+</edges>
