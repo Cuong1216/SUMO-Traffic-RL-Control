@@ -107,5 +107,30 @@ To achieve maximum training speed (Headless C++ simulation without rendering ove
 
 ---
 
+## 🚀 Advanced Upgrade: Multi-Agent RL (MARL) & Green Wave Coordination (`2×2 Grid`)
+
+This project has been expanded beyond a single intersection to control a coordinated **2×2 Grid Network (`J00`, `J01`, `J10`, `J11`)** utilizing the **Independent Learners DQN** architecture with **Cooperative Neighbor Phase Observation**.
+
+### 🌟 Key Features of the MARL Pipeline:
+1. **Cooperative Observation Vector (`dim = 84`)**: Each intersection agent observes its own `8×10` vehicle grid + current phase + countdown, plus **cooperative signals from 2 adjacent intersections** (`NEIGHBORS`), enabling AI traffic lights to learn synchronized **Green Wave** timing across adjacent junctions.
+2. **Real-Time Streamlit Web Dashboard**: Live visualization of queue lengths, cumulative waiting times, phase statuses, and multi-intersection traffic flow (`dashboard/app.py`).
+3. **Automated 4-Tier Benchmarking Suite**: Directly compare static vs AI performance across both single and multi-intersection environments via `compare_all.py`.
+
+### 📊 Visual Performance Comparison & Benchmarks
+We maintain a detailed, visual comparison report demonstrating the progression from static single-intersection control to multi-agent green wave coordination:
+👉 **[Read the Full Visual Benchmark Report (BENCHMARK_REPORT.md)](BENCHMARK_REPORT.md)**
+
+### 🖥️ Quick Start (MARL Training & Dashboard)
+To launch the 4 independent DQN learners and the live real-time web dashboard concurrently with a single command on Windows:
+```powershell
+run_marl_pipeline.bat
+```
+To run the automated benchmark comparison generator anytime:
+```powershell
+venv\Scripts\python.exe compare_all.py
+```
+
+---
+
 ## 📜 License
 This project is developed for research and educational purposes in deep reinforcement learning and intelligent traffic control.

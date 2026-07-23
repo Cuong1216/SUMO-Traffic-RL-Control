@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Define explicit lane-to-lane turning connections at all 4 controlled junctions -->
+<connections xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/connections_file.xsd">
+    <!-- Junction J00 -->
+    <!-- From North (N0_J00) going East, South, West -->
+    <connection from="N0_J00" to="J00_J01" fromLane="0" toLane="0"/>
+    <connection from="N0_J00" to="J00_J10" fromLane="0" toLane="0"/>
+    <connection from="N0_J00" to="J00_J10" fromLane="1" toLane="1"/>
+    <connection from="N0_J00" to="J00_W0"  fromLane="1" toLane="1"/>
+
+    <!-- From South (J10_J00) going West, North, East -->
+    <connection from="J10_J00" to="J00_W0"  fromLane="0" toLane="0"/>
+    <connection from="J10_J00" to="J00_N0"  fromLane="0" toLane="0"/>
+    <connection from="J10_J00" to="J00_N0"  fromLane="1" toLane="1"/>
+    <connection from="J10_J00" to="J00_J01" fromLane="1" toLane="1"/>
+
+    <!-- From East (J01_J00) going North, West, South -->
+    <connection from="J01_J00" to="J00_N0"  fromLane="0" toLane="0"/>
+    <connection from="J01_J00" to="J00_W0"  fromLane="0" toLane="0"/>
+    <connection from="J01_J00" to="J00_W0"  fromLane="1" toLane="1"/>
+    <connection from="J01_J00" to="J00_J10" fromLane="1" toLane="1"/>
+
+    <!-- From West (W0_J00) going South, East, North -->
+    <connection from="W0_J00" to="J00_J10" fromLane="0" toLane="0"/>
+    <connection from="W0_J00" to="J00_J01" fromLane="0" toLane="0"/>
+    <connection from="W0_J00" to="J00_J01" fromLane="1" toLane="1"/>
+    <connection from="W0_J00" to="J00_N0"  fromLane="1" toLane="1"/>
+
+    <!-- Junction J01 -->
+    <!-- From North (N1_J01) going East, South, West -->
+    <connection from="N1_J01" to="J01_E0"  fromLane="0" toLane="0"/>
+    <connection from="N1_J01" to="J01_J11" fromLane="0" toLane="0"/>
+    <connection from="N1_J01" to="J01_J11" fromLane="1" toLane="1"/>
+    <connection from="N1_J01" to="J01_J00" fromLane="1" toLane="1"/>
+
+    <!-- From South (J11_J01) going West, North, East -->
+    <connection from="J11_J01" to="J01_J00" fromLane="0" toLane="0"/>
+    <connection from="J11_J01" to="J01_N1"  fromLane="0" toLane="0"/>
+    <connection from="J11_J01" to="J01_N1"  fromLane="1" toLane="1"/>
+    <connection from="J11_J01" to="J01_E0"  fromLane="1" toLane="1"/>
+
+    <!-- From East (E0_J01) going North, West, South -->
+    <connection from="E0_J01" to="J01_N1"  fromLane="0" toLane="0"/>
+    <connection from="E0_J01" to="J01_J00" fromLane="0" toLane="0"/>
+    <connection from="E0_J01" to="J01_J00" fromLane="1" toLane="1"/>
+    <connection from="E0_J01" to="J01_J11" fromLane="1" toLane="1"/>
+
+    <!-- From West (J00_J01) going South, East, North -->
+    <connection from="J00_J01" to="J01_J11" fromLane="0" toLane="0"/>
+    <connection from="J00_J01" to="J01_E0"  fromLane="0" toLane="0"/>
+    <connection from="J00_J01" to="J01_E0"  fromLane="1" toLane="1"/>
+    <connection from="J00_J01" to="J01_N1"  fromLane="1" toLane="1"/>
+
+    <!-- Junction J10 -->
+    <!-- From North (J00_J10) going East, South, West -->
+    <connection from="J00_J10" to="J10_J11" fromLane="0" toLane="0"/>
+    <connection from="J00_J10" to="J10_S0"  fromLane="0" toLane="0"/>
+    <connection from="J00_J10" to="J10_S0"  fromLane="1" toLane="1"/>
+    <connection from="J00_J10" to="J10_W1"  fromLane="1" toLane="1"/>
+
+    <!-- From South (S0_J10) going West, North, East -->
+    <connection from="S0_J10" to="J10_W1"  fromLane="0" toLane="0"/>
+    <connection from="S0_J10" to="J10_J00" fromLane="0" toLane="0"/>
+    <connection from="S0_J10" to="J10_J00" fromLane="1" toLane="1"/>
+    <connection from="S0_J10" to="J10_J11" fromLane="1" toLane="1"/>
+
+    <!-- From East (J11_J10) going North, West, South -->
+    <connection from="J11_J10" to="J10_J00" fromLane="0" toLane="0"/>
+    <connection from="J11_J10" to="J10_W1"  fromLane="0" toLane="0"/>
+    <connection from="J11_J10" to="J10_W1"  fromLane="1" toLane="1"/>
+    <connection from="J11_J10" to="J10_S0"  fromLane="1" toLane="1"/>
+
+    <!-- From West (W1_J10) going South, East, North -->
+    <connection from="W1_J10" to="J10_S0"  fromLane="0" toLane="0"/>
+    <connection from="W1_J10" to="J10_J11" fromLane="0" toLane="0"/>
+    <connection from="W1_J10" to="J10_J11" fromLane="1" toLane="1"/>
+    <connection from="W1_J10" to="J10_J00" fromLane="1" toLane="1"/>
+
+    <!-- Junction J11 -->
+    <!-- From North (J01_J11) going East, South, West -->
+    <connection from="J01_J11" to="J11_E1"  fromLane="0" toLane="0"/>
+    <connection from="J01_J11" to="J11_S1"  fromLane="0" toLane="0"/>
+    <connection from="J01_J11" to="J11_S1"  fromLane="1" toLane="1"/>
+    <connection from="J01_J11" to="J11_J10" fromLane="1" toLane="1"/>
+
+    <!-- From South (S1_J11) going West, North, East -->
+    <connection from="S1_J11" to="J11_J10" fromLane="0" toLane="0"/>
+    <connection from="S1_J11" to="J11_J01" fromLane="0" toLane="0"/>
+    <connection from="S1_J11" to="J11_J01" fromLane="1" toLane="1"/>
+    <connection from="S1_J11" to="J11_E1"  fromLane="1" toLane="1"/>
+
+    <!-- From East (E1_J11) going North, West, South -->
+    <connection from="E1_J11" to="J11_J01" fromLane="0" toLane="0"/>
+    <connection from="E1_J11" to="J11_J10" fromLane="0" toLane="0"/>
+    <connection from="E1_J11" to="J11_J10" fromLane="1" toLane="1"/>
+    <connection from="E1_J11" to="J11_S1"  fromLane="1" toLane="1"/>
+
+    <!-- From West (J10_J11) going South, East, North -->
+    <connection from="J10_J11" to="J11_S1"  fromLane="0" toLane="0"/>
+    <connection from="J10_J11" to="J11_E1"  fromLane="0" toLane="0"/>
+    <connection from="J10_J11" to="J11_E1"  fromLane="1" toLane="1"/>
+    <connection from="J10_J11" to="J11_J01" fromLane="1" toLane="1"/>
+</connections>

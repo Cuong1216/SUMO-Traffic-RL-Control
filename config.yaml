@@ -5,8 +5,10 @@
 env:
   sumo_cfg: "sumo_config/simulation.sumocfg"
   use_gui: false              # Set to true to display SUMO GUI during testing/verification
+  use_libsumo: true           # Enable libsumo for 3x-10x speedup when use_gui is false
   tl_id: "J0"                 # Traffic light ID in SUMO network
   countdown_duration: 10      # Mandatory constraint: Countdown duration (seconds) for transition phases
+  action_step_delta: 3        # Number of simulation seconds to advance when agent keeps green phase (frame skipping)
   
 grid:
   cell_length: 7.0            # Length of each observation cell (meters)
@@ -18,15 +20,18 @@ grid:
     bus: 3
 
 reward:
-  alpha: 0.4                  # Weight for halting vehicle count (Queue length)
-  beta: 0.6                   # Weight for total waiting time
+  alpha: 0.4                  # Weight for normalized queue penalty
+  beta: 0.6                   # Weight for normalized waiting time penalty
+  throughput_weight: 2.0      # Bonus reward per vehicle that exits the intersection (positive signal)
+  switch_penalty: -2.0        # Penalty for switching phase (discourages rapid oscillation)
 
 agent:
   algorithm: "DQN"            # Reinforcement learning algorithm: DQN (or PPO)
+  n_envs: 4                   # Number of parallel environments for SubprocVecEnv
   learning_rate: 0.0001
   buffer_size: 50000          # Replay buffer size optimized for 8GB RAM
   batch_size: 64
   gamma: 0.99
-  total_timesteps: 100000
+  total_timesteps: 300000     # Train longer to allow new reward signal to converge
   log_dir: "./logs/"
   model_save_dir: "./models/"

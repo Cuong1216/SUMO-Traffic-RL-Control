@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Define intersection and boundary nodes for 2x2 grid network -->
+<nodes xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/nodes_file.xsd">
+    <!-- 4 Controlled junctions (traffic lights) -->
+    <node id="J00" x="0.00"   y="0.00"   type="traffic_light"/>
+    <node id="J01" x="200.00" y="0.00"   type="traffic_light"/>
+    <node id="J10" x="0.00"   y="-200.00" type="traffic_light"/>
+    <node id="J11" x="200.00" y="-200.00" type="traffic_light"/>
+
+    <!-- 8 Boundary nodes (entry/exit priority nodes) -->
+    <node id="N0" x="0.00"   y="150.00"  type="priority"/>
+    <node id="N1" x="200.00" y="150.00"  type="priority"/>
+    <node id="S0" x="0.00"   y="-350.00" type="priority"/>
+    <node id="S1" x="200.00" y="-350.00" type="priority"/>
+    <node id="W0" x="-150.00" y="0.00"   type="priority"/>
+    <node id="W1" x="-150.00" y="-200.00" type="priority"/>
+    <node id="E0" x="350.00"  y="0.00"   type="priority"/>
+    <node id="E1" x="350.00"  y="-200.00" type="priority"/>
+</nodes>
